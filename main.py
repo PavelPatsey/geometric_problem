@@ -1,9 +1,15 @@
 import random
+import matplotlib.pyplot as plt
 
-MAX_TRIAL_COORDINATE_RANGE = 10
-RANGE_COEFFICIENT = 10
+MAX_TRIAL_COORDINATE_RANGE = 20
+RANGE_COEFFICIENT = 1
 MAX_POINTS_COORDINATE_RANGE = MAX_TRIAL_COORDINATE_RANGE * RANGE_COEFFICIENT
-POINT_AMOUNT = 10
+POINT_AMOUNT = 40
+
+
+def get_segment_length(segment):
+    ((x0, y0), (x1, y1)) = segment
+    return ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5
 
 
 def get_intersection_segment_of_segment_and_triangle(segment, triangle):
@@ -21,9 +27,9 @@ def get_intersection_segment_of_segment_and_triangle(segment, triangle):
     intersection_segment = filter(lambda x: x is not None, intersection_segment)
     intersection_segment = tuple(set(intersection_segment))
 
-    if len(intersection_segment) == 0:
-        return
-    return intersection_segment
+    if len(intersection_segment) == 2:
+        return intersection_segment
+    return
 
 
 def get_all_segments_from_points(points):
@@ -42,9 +48,9 @@ def is_point_on_segment(point, segment):
     ((x0, y0), (x1, y1)) = segment
     (x, y) = point
     return (
-            (x - x0) * (y1 - y0) == (y - y0) * (x1 - x0)
-            and min(x0, x1) <= x <= max(x0, x1)
-            and min(y0, y1) <= y <= max(y0, y1)
+        (x - x0) * (y1 - y0) == (y - y0) * (x1 - x0)
+        and min(x0, x1) <= x <= max(x0, x1)
+        and min(y0, y1) <= y <= max(y0, y1)
     )
 
 
@@ -81,13 +87,38 @@ def get_intersection_point(segment_1, segment_2):
 
 
 def main():
-    print("start main")
     points = [get_random_point(MAX_POINTS_COORDINATE_RANGE) for _ in range(POINT_AMOUNT)]
-    print(f"{points=}")
     triangle = get_random_triangle(MAX_TRIAL_COORDINATE_RANGE)
-    print(f"{triangle=}")
     segments = get_all_segments_from_points(points)
-    print(f"{segments=}")
+    intersection_segments = [
+        get_intersection_segment_of_segment_and_triangle(segment, triangle) for segment in segments
+    ]
+
+    zipped = zip(segments, intersection_segments)
+    zipped = filter(lambda x: x[1] is not None, zipped)
+    zipped = map(lambda x: (x[0], x[1], get_segment_length(x[1])), zipped)
+    if not zipped:
+        print('No intersection segments')
+        return
+    else:
+        max_segment = max(zipped, key=lambda x: x[1])
+        print(f"point = {max_segment[0]}, segment = {max_segment[1]}, length = {max_segment[2]}")
+
+    for point in points:
+        plt.scatter(*point, color='blue')
+
+    triangle_segments = get_all_segments_from_points(triangle)
+    for segment in triangle_segments:
+        ((x1, y1), (x2, y2)) = segment
+        plt.plot([x1, x2], [y1, y2], color='green')
+
+    ((x1, y1), (x2, y2)) = max_segment[0]
+    plt.plot([x1, x2], [y1, y2], color='black')
+
+    ((x1, y1), (x2, y2)) = max_segment[1]
+    plt.plot([x1, x2], [y1, y2], color='red')
+
+    plt.show()
 
 
 if __name__ == "__main__":
