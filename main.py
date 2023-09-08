@@ -7,29 +7,20 @@ POINT_AMOUNT = 10
 
 
 def get_intersection_segment_of_segment_and_triangle(segment, triangle):
-    print(f"{segment=}")
     triangle_segments = get_all_segments_from_points(triangle)
-    print(f"{triangle_segments=}")
-    intersection_points = [get_intersection_point(segment, triangle_segment) for triangle_segment in triangle_segments]
-    intersection_points = [point for point in intersection_points if point is not None]
-    print(f"{intersection_points=}")
-    intersection_points = list(set(intersection_points))
-    print(f"{intersection_points=}")
 
-    combinations = [[point, segment] for point in intersection_points for segment in triangle_segments]
-    print(f"{combinations=}")
+    intersection_points = (get_intersection_point(segment, triangle_segment) for triangle_segment in triangle_segments)
+    intersection_points = filter(lambda x: x is not None, intersection_points)
+    intersection_points = set(intersection_points)
 
-    intersection_segment = [
+    intersection_segment = (
         point if is_point_on_segment(point, segment) else None
         for point in intersection_points
         for segment in triangle_segments
-    ]
-
-    print(f"intersection_segment={intersection_segment}")
-    intersection_segment = [point for point in intersection_segment if point is not None]
-    print(f"intersection_segment={intersection_segment}")
+    )
+    intersection_segment = filter(lambda x: x is not None, intersection_segment)
     intersection_segment = tuple(set(intersection_segment))
-    print(f"intersection_segment={intersection_segment}")
+
     return intersection_segment
 
 
@@ -137,10 +128,10 @@ if __name__ == "__main__":
     assert is_point_on_segment((0.5, 0.5), ((0, 1), (1, 1))) is False
     assert is_point_on_segment((-2, -2), ((-1, 0), (-0.5, 1))) is False
 
-    # segment = ((0, 0), (0, 1))
-    # triangle = ((-1, -0), (0, 2), (2, 0))
-    # intersection_segment = get_intersection_segment_of_segment_and_triangle(segment, triangle)
-    # assert set(intersection_segment) == set(((0, 0), (0, 2)))
+    segment = ((0, 0), (0, 1))
+    triangle = ((-1, -0), (0, 2), (2, 0))
+    intersection_segment = get_intersection_segment_of_segment_and_triangle(segment, triangle)
+    assert set(intersection_segment) == set(((0, 0), (0, 2)))
 
     segment = ((0, 0), (1, 1))
     triangle = ((-1, -0), (-0.5, 1), (1.5, 0))
