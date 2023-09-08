@@ -8,6 +8,12 @@ MAX_POINTS_COORDINATE_RANGE = MAX_TRIAL_COORDINATE_RANGE * RANGE_COEFFICIENT
 POINT_AMOUNT = 10
 
 
+def get_intersection_segment_of_vector_and_triangle(vector, triangle):
+    intersection_points = [get_intersection_point(vector, triangle_vector) for triangle_vector in triangle]
+    x = [is_point_on_segment(point, vector) for point in intersection_points for vector in triangle]
+    return x
+
+
 def get_all_vectors_from_points(points):
     return [(points[i], points[j]) for i in range(len(points)) for j in range(i + 1, len(points))]
 
@@ -37,7 +43,7 @@ def get_intersection_point(vector_1, vector_2):
     a, c = get_segment_equation_coefficients(vector_1)
     b, d = get_segment_equation_coefficients(vector_2)
     if a == b:
-        raise ValueError("Vectors are parallel")
+        return
     else:
         x = (d - c) / (a - b)
         y = a * x + c
@@ -60,13 +66,27 @@ if __name__ == "__main__":
     p = get_intersection_point(vector_1, vector_2)
     assert p == (0.5, 0.5)
 
-    with pytest.raises(ValueError) as err_info:
-        vector_1 = ((0, 0), (1, 1))
-        vector_2 = ((1, 1), (2, 2))
-        get_intersection_point(vector_1, vector_2)
-    assert "Vectors are parallel" in str(err_info.value)
+    vector_1 = ((0, 0), (1, 1))
+    vector_2 = ((1, 1), (2, 2))
+    p = get_intersection_point(vector_1, vector_2)
+    assert p is None
+
+    vector_1 = ((0, 0), (1, 1))
+    vector_2 = ((1, 0), (2, 1))
+    p = get_intersection_point(vector_1, vector_2)
+    assert p is None
+
+    vector_1 = ((0, 0), (1, 1))
+    vector_2 = ((0, 0), (1, 1))
+    p = get_intersection_point(vector_1, vector_2)
+    assert p is None
 
     assert is_point_on_segment((0.5, 0.5), ((0, 0), (1, 1))) is True
     assert is_point_on_segment((0.5, 0.5), ((0, 1), (1, 1))) is False
+
+    vector = ((0, 0), (0, 1))
+    triangle = ((-1, -0), (0, 2), (2, 0))
+    segment = get_intersection_segment_of_vector_and_triangle(vector, triangle)
+    assert segment == set(((0, 0), (0, 2)))
 
     main()
