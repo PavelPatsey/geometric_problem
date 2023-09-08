@@ -11,9 +11,26 @@ def get_intersection_segment_of_segment_and_triangle(segment, triangle):
     triangle_segments = get_all_segments_from_points(triangle)
     print(f"{triangle_segments=}")
     intersection_points = [get_intersection_point(segment, triangle_segment) for triangle_segment in triangle_segments]
+    intersection_points = [point for point in intersection_points if point is not None]
     print(f"{intersection_points=}")
-    x = [is_point_on_segment(point, segment) for point in intersection_points for segment in triangle]
-    return x
+    intersection_points = list(set(intersection_points))
+    print(f"{intersection_points=}")
+
+    combinations = [[point, segment] for point in intersection_points for segment in triangle_segments]
+    print(f"{combinations=}")
+
+    intersection_segment = [
+        point if is_point_on_segment(point, segment) else None
+        for point in intersection_points
+        for segment in triangle_segments
+    ]
+
+    print(f"intersection_segment={intersection_segment}")
+    intersection_segment = [point for point in intersection_segment if point is not None]
+    print(f"intersection_segment={intersection_segment}")
+    intersection_segment = tuple(set(intersection_segment))
+    print(f"intersection_segment={intersection_segment}")
+    return intersection_segment
 
 
 def get_all_segments_from_points(points):
@@ -31,7 +48,11 @@ def get_random_triangle(coordinate_range):
 def is_point_on_segment(point, segment):
     ((x0, y0), (x1, y1)) = segment
     (x, y) = point
-    return (x - x0) * (y1 - y0) == (y - y0) * (x1 - x0)
+    return (
+            (x - x0) * (y1 - y0) == (y - y0) * (x1 - x0)
+            and min(x0, x1) <= x <= max(x0, x1)
+            and min(y0, y1) <= y <= max(y0, y1)
+    )
 
 
 def get_segment_coefficients(segment):
@@ -44,6 +65,8 @@ def get_segment_coefficients(segment):
 def get_intersection_point(segment_1, segment_2):
     ((x0, y0), (x1, y1)) = segment_1
     ((x2, y2), (x3, y3)) = segment_2
+
+    # case when segment_1 or/and segment_2 is vertical
     if x0 == x1:
         if x2 == x3:
             return
@@ -55,7 +78,8 @@ def get_intersection_point(segment_1, segment_2):
 
     a, c = get_segment_coefficients(segment_1)
     b, d = get_segment_coefficients(segment_2)
-    if a == b:
+
+    if a == b:  # if segments are parallel
         return
     else:
         x = (d - c) / (a - b)
@@ -111,11 +135,16 @@ if __name__ == "__main__":
 
     assert is_point_on_segment((0.5, 0.5), ((0, 0), (1, 1))) is True
     assert is_point_on_segment((0.5, 0.5), ((0, 1), (1, 1))) is False
+    assert is_point_on_segment((-2, -2), ((-1, 0), (-0.5, 1))) is False
 
-    segment = ((0, 0), (0, 1))
-    triangle = ((-1, -0), (0, 2), (2, 0))
-    segment = get_intersection_segment_of_segment_and_triangle(segment, triangle)
+    # segment = ((0, 0), (0, 1))
+    # triangle = ((-1, -0), (0, 2), (2, 0))
+    # intersection_segment = get_intersection_segment_of_segment_and_triangle(segment, triangle)
+    # assert set(intersection_segment) == set(((0, 0), (0, 2)))
 
-    # assert segment == set(((0, 0), (0, 2)))
+    segment = ((0, 0), (1, 1))
+    triangle = ((-1, -0), (-0.5, 1), (1.5, 0))
+    intersection_segment = get_intersection_segment_of_segment_and_triangle(segment, triangle)
+    assert set(intersection_segment) == set(((0, 0), (0.5, 0.5)))
 
     main()
