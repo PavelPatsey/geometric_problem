@@ -1,5 +1,7 @@
 import random
 
+import pytest
+
 MAX_TRIAL_COORDINATE_RANGE = 10
 RANGE_COEFFICIENT = 10
 MAX_POINTS_COORDINATE_RANGE = MAX_TRIAL_COORDINATE_RANGE * RANGE_COEFFICIENT
@@ -31,7 +33,7 @@ def get_intersection_point(vector_1, vector_2):
     a, c = get_segment_equation_coefficients(vector_1)
     b, d = get_segment_equation_coefficients(vector_2)
     if a == b:
-        return
+        raise ValueError("Vectors are parallel")
     else:
         x = (d - c) / (a - b)
         y = a * x + c
@@ -52,10 +54,11 @@ if __name__ == "__main__":
     p = get_intersection_point(vector_1, vector_2)
     assert p == (0.5, 0.5)
 
-    vector_1 = ((0, 0), (1, 1))
-    vector_2 = ((1, 1), (2, 2))
-    p = get_intersection_point(vector_1, vector_2)
-    assert p is None
+    with pytest.raises(ValueError) as err_info:
+        vector_1 = ((0, 0), (1, 1))
+        vector_2 = ((1, 1), (2, 2))
+        get_intersection_point(vector_1, vector_2)
+    assert "Vectors are parallel" in str(err_info.value)
 
     assert is_point_on_segment((0.5, 0.5), ((0, 0), (1, 1))) is True
     assert is_point_on_segment((0.5, 0.5), ((0, 1), (1, 1))) is False
