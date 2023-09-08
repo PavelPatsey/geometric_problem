@@ -7,7 +7,11 @@ POINT_AMOUNT = 10
 
 
 def get_intersection_segment_of_segment_and_triangle(segment, triangle):
-    intersection_points = [get_intersection_point(segment, triangle_segment) for triangle_segment in triangle]
+    print(f"{segment=}")
+    triangle_segments = get_all_segments_from_points(triangle)
+    print(f"{triangle_segments=}")
+    intersection_points = [get_intersection_point(segment, triangle_segment) for triangle_segment in triangle_segments]
+    print(f"{intersection_points=}")
     x = [is_point_on_segment(point, segment) for point in intersection_points for segment in triangle]
     return x
 
@@ -32,15 +36,23 @@ def is_point_on_segment(point, segment):
 
 def get_segment_coefficients(segment):
     ((x0, y0), (x1, y1)) = segment
-    if x0 == x1:
-        a = 0
-    else:
-        a = (y1 - y0) / (x1 - x0)
+    a = (y1 - y0) / (x1 - x0)
     b = y0 - a * x0
     return a, b
 
 
 def get_intersection_point(segment_1, segment_2):
+    ((x0, y0), (x1, y1)) = segment_1
+    ((x2, y2), (x3, y3)) = segment_2
+    if x0 == x1:
+        if x2 == x3:
+            return
+        else:
+            a, b = get_segment_coefficients(segment_2)
+            x = x0
+            y = a * x + b
+            return x, y
+
     a, c = get_segment_coefficients(segment_1)
     b, d = get_segment_coefficients(segment_2)
     if a == b:
@@ -67,6 +79,21 @@ if __name__ == "__main__":
     p = get_intersection_point(segment_1, segment_2)
     assert p == (0.5, 0.5)
 
+    segment_1 = ((0, 0), (0, 1))
+    segment_2 = ((-1, 0), (0, 2))
+    p = get_intersection_point(segment_1, segment_2)
+    assert p == (0, 2)
+
+    segment_1 = ((0, 0), (0, 1))
+    segment_2 = ((-1, 0), (2, 0))
+    p = get_intersection_point(segment_1, segment_2)
+    assert p == (0, 0)
+
+    segment_1 = ((0, 0), (0, 1))
+    segment_2 = ((0, 2), (2, 0))
+    p = get_intersection_point(segment_1, segment_2)
+    assert p == (0, 2)
+
     segment_1 = ((0, 0), (1, 1))
     segment_2 = ((1, 1), (2, 2))
     p = get_intersection_point(segment_1, segment_2)
@@ -85,9 +112,10 @@ if __name__ == "__main__":
     assert is_point_on_segment((0.5, 0.5), ((0, 0), (1, 1))) is True
     assert is_point_on_segment((0.5, 0.5), ((0, 1), (1, 1))) is False
 
-    # segment = ((0, 0), (0, 1))
-    # triangle = ((-1, -0), (0, 2), (2, 0))
-    # segment = get_intersection_segment_of_segment_and_triangle(segment, triangle)
+    segment = ((0, 0), (0, 1))
+    triangle = ((-1, -0), (0, 2), (2, 0))
+    segment = get_intersection_segment_of_segment_and_triangle(segment, triangle)
+
     # assert segment == set(((0, 0), (0, 2)))
 
     main()
