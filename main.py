@@ -101,7 +101,7 @@ def main():
         print('No intersection segments')
         return
     else:
-        max_segment = max(zipped, key=lambda x: x[1])
+        max_segment = max(zipped, key=lambda x: x[2])
         print(f"point = {max_segment[0]}, segment = {max_segment[1]}, length = {max_segment[2]}")
 
     for point in points:
