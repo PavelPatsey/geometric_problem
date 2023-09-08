@@ -8,6 +8,10 @@ MAX_POINTS_COORDINATE_RANGE = MAX_TRIAL_COORDINATE_RANGE * RANGE_COEFFICIENT
 POINT_AMOUNT = 10
 
 
+def get_all_vectors_from_points(points):
+    return [(points[i], points[j]) for i in range(len(points)) for j in range(i + 1, len(points))]
+
+
 def get_random_point(coordinate_range):
     return tuple((random.uniform(-coordinate_range, coordinate_range) for _ in range(2)))
 
@@ -46,6 +50,8 @@ def main():
     print(f"{points=}")
     triangle = get_random_triangle(MAX_TRIAL_COORDINATE_RANGE)
     print(f"{triangle=}")
+    vectors = get_all_vectors_from_points(points)
+    print(f"{vectors=}")
 
 
 if __name__ == "__main__":
