@@ -21,6 +21,8 @@ def get_intersection_segment_of_segment_and_triangle(segment, triangle):
     intersection_segment = filter(lambda x: x is not None, intersection_segment)
     intersection_segment = tuple(set(intersection_segment))
 
+    if len(intersection_segment) == 0:
+        return
     return intersection_segment
 
 
@@ -137,5 +139,10 @@ if __name__ == "__main__":
     triangle = ((-1, -0), (-0.5, 1), (1.5, 0))
     intersection_segment = get_intersection_segment_of_segment_and_triangle(segment, triangle)
     assert set(intersection_segment) == set(((0, 0), (0.5, 0.5)))
+
+    segment = ((-2, 0), (0, 2))
+    triangle = ((-1, -0), (-0.5, 1), (1.5, 0))
+    intersection_segment = get_intersection_segment_of_segment_and_triangle(segment, triangle)
+    assert intersection_segment is None
 
     main()
