@@ -3,6 +3,7 @@ import random
 MAX_TRIAL_COORDINATE_RANGE = 10
 RANGE_COEFFICIENT = 10
 MAX_POINTS_COORDINATE_RANGE = MAX_TRIAL_COORDINATE_RANGE * RANGE_COEFFICIENT
+POINT_AMOUNT = 10
 
 
 def get_random_point(coordinate_range):
@@ -38,8 +39,8 @@ def get_intersection_point(vector_1, vector_2):
 
 
 def main():
-    print("hello world")
-    points = [get_random_point(MAX_POINTS_COORDINATE_RANGE) for _ in range(10)]
+    print("start main")
+    points = [get_random_point(MAX_POINTS_COORDINATE_RANGE) for _ in range(POINT_AMOUNT)]
     print(f"{points=}")
     triangle = get_random_triangle(MAX_TRIAL_COORDINATE_RANGE)
     print(f"{triangle=}")
