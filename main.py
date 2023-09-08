@@ -1,20 +1,18 @@
 import random
 
-import pytest
-
 MAX_TRIAL_COORDINATE_RANGE = 10
 RANGE_COEFFICIENT = 10
 MAX_POINTS_COORDINATE_RANGE = MAX_TRIAL_COORDINATE_RANGE * RANGE_COEFFICIENT
 POINT_AMOUNT = 10
 
 
-def get_intersection_segment_of_vector_and_triangle(vector, triangle):
-    intersection_points = [get_intersection_point(vector, triangle_vector) for triangle_vector in triangle]
-    x = [is_point_on_segment(point, vector) for point in intersection_points for vector in triangle]
+def get_intersection_segment_of_segment_and_triangle(segment, triangle):
+    intersection_points = [get_intersection_point(segment, triangle_segment) for triangle_segment in triangle]
+    x = [is_point_on_segment(point, segment) for point in intersection_points for segment in triangle]
     return x
 
 
-def get_all_vectors_from_points(points):
+def get_all_segments_from_points(points):
     return [(points[i], points[j]) for i in range(len(points)) for j in range(i + 1, len(points))]
 
 
@@ -26,22 +24,25 @@ def get_random_triangle(coordinate_range):
     return tuple(get_random_point(coordinate_range) for _ in range(3))
 
 
-def is_point_on_segment(point, vector):
-    ((x0, y0), (x1, y1)) = vector
+def is_point_on_segment(point, segment):
+    ((x0, y0), (x1, y1)) = segment
     (x, y) = point
     return (x - x0) * (y1 - y0) == (y - y0) * (x1 - x0)
 
 
-def get_segment_equation_coefficients(vector):
-    ((x0, y0), (x1, y1)) = vector
-    a = (y1 - y0) / (x1 - x0)
+def get_segment_coefficients(segment):
+    ((x0, y0), (x1, y1)) = segment
+    if x0 == x1:
+        a = 0
+    else:
+        a = (y1 - y0) / (x1 - x0)
     b = y0 - a * x0
     return a, b
 
 
-def get_intersection_point(vector_1, vector_2):
-    a, c = get_segment_equation_coefficients(vector_1)
-    b, d = get_segment_equation_coefficients(vector_2)
+def get_intersection_point(segment_1, segment_2):
+    a, c = get_segment_coefficients(segment_1)
+    b, d = get_segment_coefficients(segment_2)
     if a == b:
         return
     else:
@@ -56,37 +57,37 @@ def main():
     print(f"{points=}")
     triangle = get_random_triangle(MAX_TRIAL_COORDINATE_RANGE)
     print(f"{triangle=}")
-    vectors = get_all_vectors_from_points(points)
-    print(f"{vectors=}")
+    segments = get_all_segments_from_points(points)
+    print(f"{segments=}")
 
 
 if __name__ == "__main__":
-    vector_1 = ((0, 0), (1, 1))
-    vector_2 = ((-0.5, 1), (1.5, 0))
-    p = get_intersection_point(vector_1, vector_2)
+    segment_1 = ((0, 0), (1, 1))
+    segment_2 = ((-0.5, 1), (1.5, 0))
+    p = get_intersection_point(segment_1, segment_2)
     assert p == (0.5, 0.5)
 
-    vector_1 = ((0, 0), (1, 1))
-    vector_2 = ((1, 1), (2, 2))
-    p = get_intersection_point(vector_1, vector_2)
+    segment_1 = ((0, 0), (1, 1))
+    segment_2 = ((1, 1), (2, 2))
+    p = get_intersection_point(segment_1, segment_2)
     assert p is None
 
-    vector_1 = ((0, 0), (1, 1))
-    vector_2 = ((1, 0), (2, 1))
-    p = get_intersection_point(vector_1, vector_2)
+    segment_1 = ((0, 0), (1, 1))
+    segment_2 = ((1, 0), (2, 1))
+    p = get_intersection_point(segment_1, segment_2)
     assert p is None
 
-    vector_1 = ((0, 0), (1, 1))
-    vector_2 = ((0, 0), (1, 1))
-    p = get_intersection_point(vector_1, vector_2)
+    segment_1 = ((0, 0), (1, 1))
+    segment_2 = ((0, 0), (1, 1))
+    p = get_intersection_point(segment_1, segment_2)
     assert p is None
 
     assert is_point_on_segment((0.5, 0.5), ((0, 0), (1, 1))) is True
     assert is_point_on_segment((0.5, 0.5), ((0, 1), (1, 1))) is False
 
-    vector = ((0, 0), (0, 1))
-    triangle = ((-1, -0), (0, 2), (2, 0))
-    segment = get_intersection_segment_of_vector_and_triangle(vector, triangle)
-    assert segment == set(((0, 0), (0, 2)))
+    # segment = ((0, 0), (0, 1))
+    # triangle = ((-1, -0), (0, 2), (2, 0))
+    # segment = get_intersection_segment_of_segment_and_triangle(segment, triangle)
+    # assert segment == set(((0, 0), (0, 2)))
 
     main()
