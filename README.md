@@ -9,5 +9,7 @@
 ```
 python -m venv venv
 pip install requirements.txt
+venv\Scripts\activate.bat - для Windows;
+source venv/bin/activate - для Linux и MacOS.
 python main.py
 ```
