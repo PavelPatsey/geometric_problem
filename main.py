@@ -29,7 +29,6 @@ def get_intersection_segment_of_segment_and_triangle(segment, triangle):
 
     if len(intersection_segment) == 2:
         return intersection_segment
-    return
 
 
 def get_all_segments_from_points(points):
@@ -80,10 +79,9 @@ def get_intersection_point(segment_1, segment_2):
 
     if a == b:  # if segments are parallel
         return
-    else:
-        x = (d - c) / (a - b)
-        y = a * x + c
-        return x, y
+    x = (d - c) / (a - b)
+    y = a * x + c
+    return x, y
 
 
 def main():
@@ -100,9 +98,8 @@ def main():
     if not zipped:
         print('No intersection segments')
         return
-    else:
-        max_segment = max(zipped, key=lambda x: x[2])
-        print(f"point = {max_segment[0]}, segment = {max_segment[1]}, length = {max_segment[2]}")
+    max_segment = max(zipped, key=lambda x: x[2])
+    print(f"point = {max_segment[0]}, segment = {max_segment[1]}, length = {max_segment[2]}")
 
     for point in points:
         plt.scatter(*point, color='blue')
