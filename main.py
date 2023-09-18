@@ -32,7 +32,7 @@ def print_answer(max_segment):
     if max_segment is None:
         print("No intersection segments")
     else:
-        print(f"point = {max_segment[0]}, segment = {max_segment[1]}, length = {max_segment[2]}")
+        print(f"points = {max_segment[0]}, segment = {max_segment[1]}, length = {max_segment[2]}")
 
 
 def get_segment_length(segment):
