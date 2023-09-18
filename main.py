@@ -111,7 +111,7 @@ def get_intersection_point(segment_1, segment_2):
 
 
 def bind(function, *args, **kwargs):
-    return function(*args, **kwargs) if not (None in args) else None
+    return function(*args, **kwargs) if not (None in args or [] in args) else None
 
 
 def main():
@@ -127,7 +127,7 @@ def main():
     zipped = filter(lambda x: x[1] is not None, zipped)
     zipped = map(lambda x: (x[0], x[1], get_segment_length(x[1])), zipped)
 
-    max_segment = bind(max, zipped, key=lambda x: x[2])
+    max_segment = bind(max, list(zipped), key=lambda x: x[2])
 
     print_answer(max_segment)
     draw_answer(points, triangle, max_segment)
