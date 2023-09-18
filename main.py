@@ -96,7 +96,7 @@ def get_intersection_point(segment_1, segment_2):
     def segments_are_parallel(a, b):
         return math.isclose(a, b)
 
-    x0 = segment_1[0][0]
+    ((x0, _), (_, _)) = segment_1
 
     if segment_is_vertical(segment_1):
         if segment_is_vertical(segment_2):
