@@ -98,7 +98,6 @@ def get_intersection_point(segment_1, segment_2):
 
     x0 = segment_1[0][0]
 
-    # case when segment_1 or/and segment_2 is vertical
     if segment_is_vertical(segment_1):
         if segment_is_vertical(segment_2):
             return
@@ -120,7 +119,6 @@ def get_intersection_point(segment_1, segment_2):
 
 
 def bind(function, *args, **kwargs):
-    # breakpoint()
     return function(*args, **kwargs) if not (None in args or [] in args) else None
 
 
