@@ -133,10 +133,10 @@ def main():
         get_intersection_segment_of_segment_and_triangle(segment, triangle) for segment in segments
     ]
 
-    zipped = zip(segments, intersection_segments)
-
-    zipped = filter(lambda x: x[1] is not None, zipped)
-    zipped = map(lambda x: (x[0], x[1], get_segment_length(x[1])), zipped)
+    zipped = map(
+        lambda x: (x[0], x[1], get_segment_length(x[1])),
+        filter(lambda x: x[1] is not None, zip(segments, intersection_segments)),
+    )
 
     max_intersection_tuple = bind(max, list(zipped), key=lambda x: x[2])
 
