@@ -75,7 +75,7 @@ def is_point_on_segment(point, segment):
     ((x0, y0), (x1, y1)) = segment
     (x, y) = point
     return (
-        (x - x0) * (y1 - y0) == (y - y0) * (x1 - x0)
+        math.isclose((x - x0) * (y1 - y0), (y - y0) * (x1 - x0))
         and min(x0, x1) <= x <= max(x0, x1)
         and min(y0, y1) <= y <= max(y0, y1)
     )
