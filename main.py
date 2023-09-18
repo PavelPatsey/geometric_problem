@@ -7,6 +7,32 @@ MAX_POINTS_COORDINATE_RANGE = MAX_TRIAL_COORDINATE_RANGE * RANGE_COEFFICIENT
 POINT_AMOUNT = 40
 
 
+def draw_answer(points, triangle, max_segment):
+    for point in points:
+        plt.scatter(*point, color='blue')
+
+    triangle_segments = get_all_segments_from_points(triangle)
+    for segment in triangle_segments:
+        ((x1, y1), (x2, y2)) = segment
+        plt.plot([x1, x2], [y1, y2], color='green')
+
+    if max_segment:
+        ((x1, y1), (x2, y2)) = max_segment[0]
+        plt.plot([x1, x2], [y1, y2], color='black')
+
+        ((x1, y1), (x2, y2)) = max_segment[1]
+        plt.plot([x1, x2], [y1, y2], color='red')
+
+    plt.show()
+
+
+def print_answer(max_segment):
+    if max_segment is None:
+        print("No intersection segments")
+    else:
+        print(f"point = {max_segment[0]}, segment = {max_segment[1]}, length = {max_segment[2]}")
+
+
 def get_segment_length(segment):
     ((x0, y0), (x1, y1)) = segment
     return ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5
@@ -84,10 +110,15 @@ def get_intersection_point(segment_1, segment_2):
     return x, y
 
 
+def bind(function, *args, **kwargs):
+    return function(*args, **kwargs) if not (None in args) else None
+
+
 def main():
     points = [get_random_point(MAX_POINTS_COORDINATE_RANGE) for _ in range(POINT_AMOUNT)]
     triangle = get_random_triangle(MAX_TRIAL_COORDINATE_RANGE)
     segments = get_all_segments_from_points(points)
+
     intersection_segments = [
         get_intersection_segment_of_segment_and_triangle(segment, triangle) for segment in segments
     ]
@@ -95,27 +126,11 @@ def main():
     zipped = zip(segments, intersection_segments)
     zipped = filter(lambda x: x[1] is not None, zipped)
     zipped = map(lambda x: (x[0], x[1], get_segment_length(x[1])), zipped)
-    if not zipped:
-        print('No intersection segments')
-        return
-    max_segment = max(zipped, key=lambda x: x[2])
-    print(f"point = {max_segment[0]}, segment = {max_segment[1]}, length = {max_segment[2]}")
 
-    for point in points:
-        plt.scatter(*point, color='blue')
+    max_segment = bind(max, zipped, key=lambda x: x[2])
 
-    triangle_segments = get_all_segments_from_points(triangle)
-    for segment in triangle_segments:
-        ((x1, y1), (x2, y2)) = segment
-        plt.plot([x1, x2], [y1, y2], color='green')
-
-    ((x1, y1), (x2, y2)) = max_segment[0]
-    plt.plot([x1, x2], [y1, y2], color='black')
-
-    ((x1, y1), (x2, y2)) = max_segment[1]
-    plt.plot([x1, x2], [y1, y2], color='red')
-
-    plt.show()
+    print_answer(max_segment)
+    draw_answer(points, triangle, max_segment)
 
 
 if __name__ == "__main__":
