@@ -1,4 +1,6 @@
+import math
 import random
+
 import matplotlib.pyplot as plt
 
 MAX_TRIAL_COORDINATE_RANGE = 20
@@ -87,12 +89,18 @@ def get_segment_coefficients(segment):
 
 
 def get_intersection_point(segment_1, segment_2):
-    ((x0, y0), (x1, y1)) = segment_1
-    ((x2, y2), (x3, y3)) = segment_2
+    def segment_is_vertical(segment):
+        ((x0, _), (x1, _)) = segment
+        return math.isclose(x0, x1)
+
+    def segments_are_parallel(a, b):
+        return math.isclose(a, b)
+
+    x0 = segment_1[0][0]
 
     # case when segment_1 or/and segment_2 is vertical
-    if x0 == x1:
-        if x2 == x3:
+    if segment_is_vertical(segment_1):
+        if segment_is_vertical(segment_2):
             return
         else:
             a, b = get_segment_coefficients(segment_2)
@@ -103,14 +111,16 @@ def get_intersection_point(segment_1, segment_2):
     a, c = get_segment_coefficients(segment_1)
     b, d = get_segment_coefficients(segment_2)
 
-    if a == b:  # if segments are parallel
+    if segments_are_parallel(a, b):
         return
+
     x = (d - c) / (a - b)
     y = a * x + c
     return x, y
 
 
 def bind(function, *args, **kwargs):
+    # breakpoint()
     return function(*args, **kwargs) if not (None in args or [] in args) else None
 
 
