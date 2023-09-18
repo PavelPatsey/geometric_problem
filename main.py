@@ -9,7 +9,7 @@ MAX_POINTS_COORDINATE_RANGE = MAX_TRIAL_COORDINATE_RANGE * RANGE_COEFFICIENT
 POINT_AMOUNT = 40
 
 
-def draw_answer(points, triangle, max_segment):
+def draw_answer(points, triangle, max_intersection_tuple):
     for point in points:
         plt.scatter(*point, color='blue')
 
@@ -18,21 +18,23 @@ def draw_answer(points, triangle, max_segment):
         ((x1, y1), (x2, y2)) = segment
         plt.plot([x1, x2], [y1, y2], color='green')
 
-    if max_segment:
-        ((x1, y1), (x2, y2)) = max_segment[0]
+    if max_intersection_tuple:
+        ((x1, y1), (x2, y2)) = max_intersection_tuple[0]
         plt.plot([x1, x2], [y1, y2], color='black')
 
-        ((x1, y1), (x2, y2)) = max_segment[1]
+        ((x1, y1), (x2, y2)) = max_intersection_tuple[1]
         plt.plot([x1, x2], [y1, y2], color='red')
 
     plt.show()
 
 
-def print_answer(max_segment):
-    if max_segment is None:
+def print_answer(max_intersection_tuple):
+    if max_intersection_tuple is None:
         print("No intersection segments")
     else:
-        print(f"points = {max_segment[0]}, segment = {max_segment[1]}, length = {max_segment[2]}")
+        print(
+            f"points = {max_intersection_tuple[0]}, segment = {max_intersection_tuple[1]}, length = {max_intersection_tuple[2]}"
+        )
 
 
 def get_segment_length(segment):
@@ -132,13 +134,14 @@ def main():
     ]
 
     zipped = zip(segments, intersection_segments)
+
     zipped = filter(lambda x: x[1] is not None, zipped)
     zipped = map(lambda x: (x[0], x[1], get_segment_length(x[1])), zipped)
 
-    max_segment = bind(max, list(zipped), key=lambda x: x[2])
+    max_intersection_tuple = bind(max, list(zipped), key=lambda x: x[2])
 
-    print_answer(max_segment)
-    draw_answer(points, triangle, max_segment)
+    print_answer(max_intersection_tuple)
+    draw_answer(points, triangle, max_intersection_tuple)
 
 
 if __name__ == "__main__":
